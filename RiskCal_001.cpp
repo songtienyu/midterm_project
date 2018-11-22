@@ -4,7 +4,7 @@
 using namespace std;
 
 double RiskCal(double Xi, double Yi, int RiskCnt, int RiskX[], int RiskY[], int RiskR[], int RiskP[]);
-double AllRisk(int Ini_Xs, int Ini_Ys, int Ini_Xt, int Ini_Yt, int Xs, int Ys, int Xt, int Yt, int RiskCnt, int RiskX[], int RiskY[], int RiskR[], int RiskP[]);
+double AllRisk(double& FragDistance, int Ini_Xs, int Ini_Ys, int Ini_Xt, int Ini_Yt, int Xs, int Ys, int Xt, int Yt, int RiskCnt, int RiskX[], int RiskY[], int RiskR[], int RiskP[]);
 
 
 
@@ -65,27 +65,25 @@ int main()
     cout << "turning points: ";
     for(int i = 0; i < turn; i++)
         cout << "(" <<turnX[i] << "," <<  turnY[i] << ")";
-    cout << endl;
+    cout << endl << endl;
     /************/
 
+	//è·¯æ®µallriskå‡½æ•¸æ¸¬è©¦ 
 
-	double Xi = 0, Yi = 0;//*******************³æÂI - songtien
-	cin >> Xi >> Yi;
-//	
-//	//riskcalculate test - songtien
-	cout << "RiskCal: " << RiskCal(Xi, Yi, m, X, Y, R, P);
-	int x1, x2, y1, y2 = 0;	
+	//riskcalculate test - songtien	
+	int x1, x2, y1, y2;
+	double F = 0;
+	double& Frag = F;//call by reference
 
-	//allrisk
-	cout << endl << "¿é¤J¨â­ÓÂà§éÂIªº®y¼Ð(x1 y1 x2 y2)¡G";
-	cin >>  x1 >> y1 >> x2 >> y2;
-	cout << "AllRisk: " << AllRisk(Xs, Ys, Xt, Yt, x1, y1, x2, y2, m, X, Y, R, P);
-	
+	cout << endl << "è¼¸å…¥å…©å€‹è½‰æŠ˜é»žçš„åº§æ¨™(x1 y1 x2 y2)ï¼š";
+	cin >>  x1 >> y1 >> x2 >> y2;	
+	cout << endl << "è·¯æ®µä¸ŠAllRisk: " << AllRisk(F, Xs, Ys, Xt, Yt, x1, y1, x2, y2, m, X, Y, R, P) << endl;
+	cout << "ä¸‹ä¸€è·¯æ®µé–‹é ­æœªæ»¿1å…¬é‡Œè·é›¢: " << F << endl; 
     return 0;
 }
 
 double RiskCal(double Xi, double Yi, int RiskCnt, int RiskX[], int RiskY[], int RiskR[], int RiskP[])
-{//­pºâ³æÂI­·ÀI - songtien 
+{//è¨ˆç®—å–®é»žé¢¨éšª - songtien 
 	int i = 0, j = 0;
 	double risk = 0, d = 0, temp = 0;
 	for(i = 0; i < RiskCnt; i++)
@@ -97,50 +95,62 @@ double RiskCal(double Xi, double Yi, int RiskCnt, int RiskX[], int RiskY[], int 
 		if(d <= RiskR[i]) 
 		{
 			risk = risk + RiskP[i] * ((RiskR[i] - d) / RiskR[i]);
-			cout << "¦³­·ÀIªºd: " << d << " risk: " << RiskP[i] * ((RiskR[i] - d) / RiskR[i]) << endl;
+			cout << "æœ‰é¢¨éšªçš„d: " << d << " risk: " << RiskP[i] * ((RiskR[i] - d) / RiskR[i]) << endl;
 		}
 	}
 	return risk;
 }
 
-double AllRisk(int Ini_Xs, int Ini_Ys, int Ini_Xt, int Ini_Yt, int Xs, int Ys, int Xt, int Yt, int RiskCnt, int RiskX[], int RiskY[], int RiskR[], int RiskP[])
-{//¥²¶·¥ý¶Ç¤JÃD¥Øªº°_ÂI²×ÂI!!!!!¦]¬°°_©lÂI²×ÂI³£¤£­pºâ­·ÀI!!!!! - songtien 
-	double distance = 0, allrisk = 0, risk = 0, risk_X[1001] = {0}, risk_Y[1001] = {0};
+double AllRisk(double& FragDistance, int Ini_Xs, int Ini_Ys, int Ini_Xt, int Ini_Yt, int Xs, int Ys, int Xt, int Yt, int RiskCnt, int RiskX[], int RiskY[], int RiskR[], int RiskP[])
+{//å¿…é ˆå…ˆå‚³å…¥é¡Œç›®çš„èµ·é»žçµ‚é»ž!!!!!å› ç‚ºèµ·å§‹é»žçµ‚é»žéƒ½ä¸è¨ˆç®—é¢¨éšª!!!!! - songtien 
+	double distance = 0, allrisk = 0, risk = 0, risk_X[1001] = {0}, risk_Y[1001] = {0}, Frag = 0;
 	int j = 0, a = 0;
 	distance = sqrt(pow(Xt-Xs, 2) + pow(Yt-Ys, 2));
-	cout << "distance:" << distance << endl;
+//	cout << "distance:" << distance << endl;
 	
-		double d1 = ceil(distance);
+		double d1 = ceil(distance - FragDistance);//è¦ç®—æœ‰å¹¾å€‹é»žçš„è·é›¢ï¼Œå…ˆæ¸›åŽ»é–‹é ­éœ€è¦è£œè¶³çš„éƒ¨åˆ† 
 		
-		if (Ini_Xs==Xs && Ini_Ys==Ys)//¬O°_ÂI 
+		if (Ini_Xs==Xs && Ini_Ys==Ys)//æ˜¯èµ·é»ž 
 		{
 			for (j = 1; j < d1; j++)
         	{
-        		if (risk_X[j]==Ini_Xt && risk_Y[j]==Ini_Yt) break;//­Y³Ì«á¤@­ÓÂI®y¼Ð¬O²×ÂI«h¤£­pºâ­·ÀI 
+        		if (risk_X[j]==Ini_Xt && risk_Y[j]==Ini_Yt) break;//è‹¥æœ€å¾Œä¸€å€‹é»žåº§æ¨™æ˜¯çµ‚é»žå‰‡ä¸è¨ˆç®—é¢¨éšª 
 	            risk_X[j] = Xs + ((Xt - Xs) / distance) * j;
 	            risk_Y[j] = Ys + ((Yt - Ys) / distance) * j;
-	            cout << "(" << risk_X[j] << "," << risk_Y[j] << ")" << endl;
+	            cout << "è·¯æ®µä¸Šå°é¢¨éšªé»žåº§æ¨™: (" << risk_X[j] << "," << risk_Y[j] << ")" << endl;
 	         	risk = RiskCal(risk_X[j], risk_Y[j], RiskCnt, RiskX, RiskY, RiskR, RiskP);
 	         	cout << "risk: " << risk << endl << endl;
 	         	allrisk = allrisk + risk;
         	}
 		}
 
-		else//¤£¬O°_ÂI 
+		else//ä¸æ˜¯èµ·é»ž 
 		{
+			risk_X[0] = Xs + ((Xt - Xs) / distance) * FragDistance;
+		    risk_Y[0] = Ys + ((Yt - Ys) / distance) * FragDistance;
+		    cout << "(" << risk_X[0] << "," << risk_Y[0] << ")" << endl;
+		    risk = RiskCal(risk_X[0], risk_Y[0], RiskCnt, RiskX, RiskY, RiskR, RiskP);
+		    cout << "risk: " << risk << endl << endl;
+		    allrisk = allrisk + risk;
+		        
 	        for (j = 1; j < d1; j++)
 	        {
 	        	if (risk_X[j]==Ini_Xt && risk_Y[j]==Ini_Yt) break;
-		        risk_X[j-1] = Xs + ((Xt - Xs) / distance) * j;
-		    	risk_Y[j-1] = Ys + ((Yt - Ys) / distance) * j;
-		        cout << "(" << risk_X[j-1] << "," << risk_Y[j-1] << ")" << endl;
+		        risk_X[j] = Xs + ((Xt - Xs) / distance) * j;
+		    	risk_Y[j] = Ys + ((Yt - Ys) / distance) * j;
+		        cout << "è·¯æ®µä¸Šå°é¢¨éšªé»žåº§æ¨™: (" << risk_X[j-1] << "," << risk_Y[j-1] << ")" << endl;
 		        risk = RiskCal(risk_X[j-1], risk_Y[j-1], RiskCnt, RiskX, RiskY, RiskR, RiskP);
 		        cout << "risk: " << risk << endl << endl;
 		        allrisk = allrisk + risk;
 	        }
 		}
+		
+		double Dx = Xt - risk_X[j-1];
+		double Dy = Xt - risk_Y[j-1];
+		Frag = sqrt(pow(Dx, 2) + pow(Dy, 2));//å¤šçš„ä¸è¶³ä¸€å…¬é‡Œçš„è·é›¢ 
+		cout << "Frag: " << Frag << " ; Left: "<< 1 - Frag << endl;
+		FragDistance = 1 - Frag;//å›žå‚³äº†å‰©é¤˜çš„ç‰‡æ®µ 
 	return allrisk;
 }
-
 
 
